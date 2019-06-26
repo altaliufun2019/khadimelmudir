@@ -5,16 +5,20 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"mudiralmaham/api"
-	logger "mudiralmaham/utils"
+	"mudiralmaham/utils/Database"
+	logger "mudiralmaham/utils/Logger"
 	"net/http"
 	"os"
 	"time"
 )
 
-var Router = mux.NewRouter()
+var (
+	Router  = mux.NewRouter()
+)
 
 func main() {
 	apiMapper()
+	Database.DatabaseInit()
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -31,7 +35,6 @@ func main() {
 	}
 	startUpLog(false, srv, port)
 }
-
 /**
 	#main api router
 		it maps incoming routes to dedicated functions
@@ -52,4 +55,8 @@ func startUpLog(inFile bool, srv *http.Server, port string) {
 		log.Printf("Open http://localhost:%s in the browser\n", port)
 		log.Fatal(srv.ListenAndServe())
 	}
+}
+
+func cleanUp() {
+	Database.DisconnectDB()
 }

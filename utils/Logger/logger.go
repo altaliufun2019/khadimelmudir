@@ -1,4 +1,4 @@
-package utils
+package Logger
 
 import (
 	"fmt"
@@ -20,10 +20,10 @@ func init() {
 
 	logFile, err := os.OpenFile(absPath + "\\" +logName, os.O_RDWR|os.O_CREATE, 0666)
 	if err != nil {
-		fmt.Print("error opening log file:", err)
+		fmt.Print("error opening Logger file:", err)
 		os.Exit(1)
 	}
 
-	GeneralLogger = log.New(logFile, "General logger:\t", log.Ldate|log.Ltime|log.Lshortfile)
-	ErrorLogger = log.New(logFile, "Error logger:\t", log.Ldate|log.Ltime|log.Lshortfile)
+	GeneralLogger = log.New(logFile, "General Logger:\t", log.Ldate|log.Ltime|log.Lshortfile)
+	ErrorLogger = log.New(logFile, "Error Logger:\t", log.Ldate|log.Ltime|log.Lshortfile)
 }
