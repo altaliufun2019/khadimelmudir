@@ -1,4 +1,4 @@
-package Database
+package database
 
 import (
 	"context"
@@ -7,11 +7,12 @@ import (
 	"mudiralmaham/utils/Logger"
 )
 
-var(
-	Client *mongo.Client
-	err    error
+var (
+	databaseName = "makhzan"
+	Client       *mongo.Client
+	DB           *mongo.Database
+	err          error
 )
-
 
 func DatabaseInit() {
 	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
@@ -20,25 +21,24 @@ func DatabaseInit() {
 		Logger.ErrorLogger.Println("Error in connecting to mongodb:", err)
 		return
 	}
-	Logger.GeneralLogger.Println("connected to Database")
+	Logger.GeneralLogger.Println("connected to DB")
 
 	err = Client.Ping(context.TODO(), nil)
 	if err != nil {
 		Logger.ErrorLogger.Println("Error in pinging to mongodb:", err)
 		return
 	}
-	Logger.GeneralLogger.Println("connection to Database checked successfully")
-}
+	Logger.GeneralLogger.Println("connection to DB checked successfully")
 
+	DB = Client.Database(databaseName)
+}
 
 func DisconnectDB() {
 	err := Client.Disconnect(context.TODO())
 
 	if err != nil {
-		Logger.ErrorLogger.Println("Error in disconnecting to Database:", err)
+		Logger.ErrorLogger.Println("Error in disconnecting to DB:", err)
 	} else {
-		Logger.GeneralLogger.Println("disconnected from Database")
+		Logger.GeneralLogger.Println("disconnected from DB")
 	}
 }
-
-

@@ -2,23 +2,19 @@ package main
 
 import (
 	"fmt"
-	"github.com/gorilla/mux"
+	"github.com/gorilla/handlers"
 	"log"
-	"mudiralmaham/api"
-	"mudiralmaham/utils/Database"
+	"mudiralmaham/router"
 	logger "mudiralmaham/utils/Logger"
+	"mudiralmaham/utils/database"
 	"net/http"
 	"os"
 	"time"
 )
 
-var (
-	Router  = mux.NewRouter()
-)
-
 func main() {
-	apiMapper()
-	Database.DatabaseInit()
+	router.ApiMapper()
+	database.DatabaseInit()
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -28,21 +24,13 @@ func main() {
 	}
 
 	srv := &http.Server{
-		Handler: Router,
-		Addr: "localhost:" + port,
+		//Handler: handlers.LoggingHandler(logger.GeneralLogger.Writer(), Router),
+		Handler:      handlers.LoggingHandler(os.Stdout, router.Router),
+		Addr:         "localhost:" + port,
 		WriteTimeout: 15 * time.Second,
-		ReadTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
 	}
 	startUpLog(false, srv, port)
-}
-/**
-	#main api router
-		it maps incoming routes to dedicated functions
- */
-func apiMapper() {
-	auth := Router.PathPrefix("/auth").Subrouter()
-	auth.HandleFunc("/login", api.Login)
-	auth.HandleFunc("/signUp", api.SignUp)
 }
 
 func startUpLog(inFile bool, srv *http.Server, port string) {
@@ -50,7 +38,7 @@ func startUpLog(inFile bool, srv *http.Server, port string) {
 		logger.GeneralLogger.Printf("Listening on port %s\n", port)
 		logger.GeneralLogger.Printf("Open http://localhost:%s in the browser\n", port)
 		logger.ErrorLogger.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
-	} else{
+	} else {
 		log.Printf("Listening on port %s\n", port)
 		log.Printf("Open http://localhost:%s in the browser\n", port)
 		log.Fatal(srv.ListenAndServe())
@@ -58,5 +46,5 @@ func startUpLog(inFile bool, srv *http.Server, port string) {
 }
 
 func cleanUp() {
-	Database.DisconnectDB()
+	database.DisconnectDB()
 }
