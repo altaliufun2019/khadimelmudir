@@ -20,7 +20,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	//TODO: check with database
 
 	response.Msg = "login successful"
-	response.Token, err = getTokenHandler(credits.Username)
+	response.Token, err = jwtEncoder(credits.Username)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -63,7 +63,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//TODO: check unique username
-	response.Token, err = getTokenHandler(credits.Username)
+	response.Token, err = jwtEncoder(credits.Username)
 	response.Msg = "signUp complete"
 	if err != nil {
 		http.Error(w, err.Error(), 500)

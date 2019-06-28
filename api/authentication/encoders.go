@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func getTokenHandler(username string) (string, error) {
+func jwtEncoder(username string) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 	claims["username"] = username
