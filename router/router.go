@@ -2,7 +2,8 @@ package router
 
 import (
 	"github.com/gorilla/mux"
-	authentication2 "mudiralmaham/api/authentication"
+	authApi "mudiralmaham/api/authentication"
+	"mudiralmaham/api/event"
 	"mudiralmaham/utils/authentication"
 	"net/http"
 )
@@ -18,8 +19,11 @@ var (
 */
 func ApiMapper() {
 	auth := Router.PathPrefix("/auth").Subrouter()
-	auth.HandleFunc("/login", authentication2.Login)
-	auth.HandleFunc("/signUp", authentication2.SignUp)
-	auth.Handle("/say_hello", jwtMiddleWare.Handler(http.HandlerFunc(authentication2.SayHello))).Methods("GET")
-
+	eventHandler := Router.PathPrefix("/event").Subrouter()
+	auth.HandleFunc("/login", authApi.Login)
+	auth.HandleFunc("/signUp", authApi.SignUp)
+	//auth.HandleFunc("/say_hello", authApi.SayHello)
+	auth.Handle("/say_hello", jwtMiddleWare.Handler(http.HandlerFunc(authApi.SayHello))).Methods("GET")
+	eventHandler.Handle("/add", jwtMiddleWare.Handler(http.HandlerFunc(event.Add))).Methods("POST")
+	eventHandler.Handle("/get", jwtMiddleWare.Handler(http.HandlerFunc(event.Get))).Methods("POST")
 }

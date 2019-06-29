@@ -3,7 +3,9 @@ package authentication
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"go.mongodb.org/mongo-driver/bson"
 	"mudiralmaham/models"
 	"mudiralmaham/utils/Logger"
 	"mudiralmaham/utils/database"
@@ -17,7 +19,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 		return
 	}
-	//TODO: check with database
+	err = checkUserInDB(w, r, credits)
+	if err != nil {
+		return
+	}
 
 	response.Msg = "login successful"
 	response.Token, err = jwtEncoder(credits.Username)
@@ -38,12 +43,40 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(200)
 }
 
+func checkUserInDB(w http.ResponseWriter, r *http.Request, credits loginCredentials) error {
+	var user models.User
+	err := database.
+		DB.
+		Collection("user").
+		FindOne(context.TODO(), bson.D{{"username", credits.Username}}).
+		Decode(&user)
+	if err != nil {
+		http.Error(w, err.Error(), 401)
+		return err
+	}
+	if user.Password != credits.Password {
+		http.Error(w, "wrong password", 400)
+		return errors.New("wrong password")
+	}
+	return nil
+}
+
 func SignUp(w http.ResponseWriter, r *http.Request) {
 	response := signUpResponse{}
-	// example for writing to db
 	credits, err := signUpDecoder(r)
 	if err != nil {
 		http.Error(w, err.Error(), 400)
+		return
+	}
+
+	var user models.User
+	err = database.
+		DB.
+		Collection("user").
+		FindOne(context.TODO(), bson.D{{"username", credits.Username}}).
+		Decode(&user)
+	if user.Username != "" {
+		http.Error(w, "duplicate username", 400)
 		return
 	}
 
@@ -55,14 +88,13 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 				Username: credits.Username,
 				Name:     credits.Name,
 				Password: credits.Password,
-				Event:    models.Event{},
+				Events:   []models.Event{},
 			})
 	if err != nil {
 		Logger.ErrorLogger.Println("Error in inserting file:", err)
 		http.Error(w, err.Error(), 500)
 		return
 	}
-	//TODO: check unique username
 	response.Token, err = jwtEncoder(credits.Username)
 	response.Msg = "signUp complete"
 	if err != nil {
