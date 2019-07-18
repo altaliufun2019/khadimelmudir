@@ -18,7 +18,7 @@ func init() {
 		fmt.Print("problem in finding logs path")
 	}
 
-	logFile, err := os.OpenFile(absPath + "\\" +logName, os.O_RDWR|os.O_CREATE, 0666)
+	logFile, err := os.OpenFile(absPath+"/"+logName, os.O_RDWR|os.O_CREATE, 0666)
 	if err != nil {
 		fmt.Print("error opening Logger file:", err)
 		os.Exit(1)

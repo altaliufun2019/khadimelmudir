@@ -3,7 +3,8 @@ package router
 import (
 	"github.com/gorilla/mux"
 	authApi "mudiralmaham/api/authentication"
-	"mudiralmaham/api/event"
+	"mudiralmaham/api/project"
+	"mudiralmaham/api/task"
 	"mudiralmaham/utils/authentication"
 	"net/http"
 )
@@ -19,11 +20,15 @@ var (
 */
 func ApiMapper() {
 	auth := Router.PathPrefix("/auth").Subrouter()
-	eventHandler := Router.PathPrefix("/event").Subrouter()
+	projectHandler := Router.PathPrefix("/project").Subrouter()
+	taskHandler := Router.PathPrefix("/task").Subrouter()
 	auth.HandleFunc("/login", authApi.Login)
 	auth.HandleFunc("/signUp", authApi.SignUp)
 	//auth.HandleFunc("/say_hello", authApi.SayHello)
 	auth.Handle("/say_hello", jwtMiddleWare.Handler(http.HandlerFunc(authApi.SayHello))).Methods("GET")
-	eventHandler.Handle("/add", jwtMiddleWare.Handler(http.HandlerFunc(event.Add))).Methods("POST")
-	eventHandler.Handle("/get", jwtMiddleWare.Handler(http.HandlerFunc(event.Get))).Methods("POST")
+	projectHandler.Handle("/add", jwtMiddleWare.Handler(http.HandlerFunc(project.Add))).Methods("POST")
+	projectHandler.Handle("/get", jwtMiddleWare.Handler(http.HandlerFunc(project.Get))).Methods("POST")
+	projectHandler.Handle("/add_collaborator", jwtMiddleWare.Handler(http.HandlerFunc(project.AddCollaborator))).Methods("POST")
+
+	taskHandler.Handle("/add", jwtMiddleWare.Handler(http.HandlerFunc(task.Add))).Methods("POST")
 }
