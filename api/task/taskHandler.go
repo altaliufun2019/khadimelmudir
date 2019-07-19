@@ -12,7 +12,7 @@ import (
 func Add(w http.ResponseWriter, r *http.Request) {
 	task, err := taskDecoder(r)
 	if err != nil {
-		http.Error(w, "wrong task format", 400)
+		http.Error(w, err.Error(), 400)
 		return
 	}
 
