@@ -67,6 +67,14 @@ func Add(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//project.Tasks = []models.Task{}
+
+	var dbProject models.Project
+	err = database.DB.Collection("project").
+		FindOne(context.TODO(), bson.D{{"name", project.Name}}).Decode(&dbProject)
+	if dbProject.Name != "" {
+		http.Error(w, "duplicate project", 400)
+		return
+	}
 	_, err = database.DB.Collection("project").InsertOne(context.TODO(), project)
 	if err != nil {
 		http.Error(w, err.Error(), 500)

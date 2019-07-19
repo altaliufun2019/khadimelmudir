@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
+	"mudiralmaham/models"
 	"mudiralmaham/utils/database"
 	"net/http"
 )
@@ -12,6 +13,14 @@ func Add(w http.ResponseWriter, r *http.Request) {
 	task, err := taskDecoder(r)
 	if err != nil {
 		http.Error(w, err.Error(), 400)
+		return
+	}
+
+	var dbTask models.Task
+	err = database.DB.Collection("task").
+		FindOne(context.TODO(), bson.D{{"name", task.Name}}).Decode(&dbTask)
+	if dbTask.Name != "" {
+		http.Error(w, "duplicate task", 400)
 		return
 	}
 
