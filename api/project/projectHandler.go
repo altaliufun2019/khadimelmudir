@@ -123,8 +123,9 @@ func Get(w http.ResponseWriter, r *http.Request) {
 	cursor, err := database.
 		DB.
 		Collection("project").
-		Find(context.TODO(), bson.D{{"collaborators",
-			bson.D{{"$regex", primitive.Regex{Pattern: ".*" + me.Username + ".*", Options: "i"}}}}})
+		Find(context.TODO(), bson.D{{"$or", []interface{}{
+			bson.M{"collaborators": bson.D{{"$regex", primitive.Regex{Pattern: ".*" + me.Username + ".*", Options: "i"}}}},
+			bson.M{"collaborators": bson.D{{"$regex", primitive.Regex{Pattern: ".*ALL.*", Options: "i"}}}}}}})
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
