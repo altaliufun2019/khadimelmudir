@@ -26,7 +26,7 @@ func taskDecoder(r *http.Request) (taskModel, error) {
 		return task, err
 	}
 
-	err = json.Unmarshal(body, task)
+	err = json.Unmarshal(body, &task)
 	if err != nil {
 		return task, err
 	}
