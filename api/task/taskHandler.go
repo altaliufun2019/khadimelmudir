@@ -3,6 +3,7 @@ package task
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"mudiralmaham/models"
 	"mudiralmaham/utils/database"
@@ -49,6 +50,7 @@ func Add(w http.ResponseWriter, r *http.Request) {
 	//	return
 	//}
 	//_, _ = fmt.Fprint(w, "task added successfully")
+	_, _ = fmt.Fprint(w, "{}")
 	w.WriteHeader(200)
 }
 

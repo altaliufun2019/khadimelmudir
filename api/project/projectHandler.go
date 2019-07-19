@@ -3,6 +3,7 @@ package project
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"gopkg.in/gomail.v2"
@@ -103,6 +104,7 @@ func Add(w http.ResponseWriter, r *http.Request) {
 	//		return
 	//	}
 	//}
+	_, _ = fmt.Fprint(w, "{}")
 	//_, _ = fmt.Fprint(w, "{\"msg\": \"project added to database\"|}")
 	w.WriteHeader(200)
 }
