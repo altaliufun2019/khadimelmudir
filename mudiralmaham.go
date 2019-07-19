@@ -24,8 +24,8 @@ func main() {
 	}
 
 	srv := &http.Server{
-		Handler: handlers.LoggingHandler(logger.GeneralLogger.Writer(), router.Router),
-		//Handler:      handlers.LoggingHandler(os.Stdout, router.Router),
+		//Handler: handlers.LoggingHandler(logger.GeneralLogger.Writer(), router.Router),
+		Handler:      handlers.LoggingHandler(os.Stdout, router.Router),
 		Addr:         "localhost:" + port,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
