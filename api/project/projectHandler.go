@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"gopkg.in/gomail.v2"
 	"mudiralmaham/models"
 	"mudiralmaham/utils/database"
 	"net/http"
-	"strings"
 )
 
 func AddCollaborator(w http.ResponseWriter, r *http.Request) {
@@ -66,36 +66,36 @@ func Add(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 400)
 		return
 	}
-	project.Tasks = []models.Task{}
+	//project.Tasks = []models.Task{}
 	_, err = database.DB.Collection("project").InsertOne(context.TODO(), project)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
 
-	collaborators := strings.Split(project.Collaborators, " __ ")
+	//collaborators := strings.Split(project.Collaborators, " __ ")
 
-	for i := 0; i < len(collaborators); i++ {
-		var user models.User
-		err = database.
-			DB.
-			Collection("user").
-			FindOne(context.TODO(), bson.D{{"username", collaborators[i]}}).
-			Decode(&user)
-		if err != nil {
-			http.Error(w, err.Error(), 400)
-			return
-		}
-		update := bson.M{"$push": bson.M{"projects": project}}
-		_, err = database.
-			DB.
-			Collection("user").
-			UpdateOne(context.TODO(), bson.D{{"username", collaborators[i]}}, update)
-		if err != nil {
-			http.Error(w, err.Error(), 500)
-			return
-		}
-	}
+	//for i := 0; i < len(collaborators); i++ {
+	//	var user models.User
+	//	err = database.
+	//		DB.
+	//		Collection("user").
+	//		FindOne(context.TODO(), bson.D{{"username", collaborators[i]}}).
+	//		Decode(&user)
+	//	if err != nil {
+	//		http.Error(w, err.Error(), 400)
+	//		return
+	//	}
+	//	update := bson.M{"$push": bson.M{"projects": project}}
+	//	_, err = database.
+	//		DB.
+	//		Collection("user").
+	//		UpdateOne(context.TODO(), bson.D{{"username", collaborators[i]}}, update)
+	//	if err != nil {
+	//		http.Error(w, err.Error(), 500)
+	//		return
+	//	}
+	//}
 	_, _ = fmt.Fprint(w, "project added to database")
 	w.WriteHeader(200)
 }
@@ -107,16 +107,30 @@ func Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var user models.User
-	err = database.
+	//var user models.User
+	//err = database.
+	//	DB.
+	//	Collection("user").FindOne(context.TODO(), bson.M{"username": me.Username}).
+	//	Decode(&user)
+	var projects []models.Project
+	cursor, err := database.
 		DB.
-		Collection("user").FindOne(context.TODO(), bson.M{"username": me.Username}).
-		Decode(&user)
+		Collection("project").
+		Find(context.TODO(), bson.M{"collaborators": primitive.Regex{Pattern: "/" + me.Username + "/"}})
 	if err != nil {
-		http.Error(w, err.Error(), 400)
+		http.Error(w, err.Error(), 500)
 		return
 	}
-	output, err := json.Marshal(user.Projects)
+	for cursor.Next(context.TODO()) {
+		var project models.Project
+		cursor.Decode(&project)
+		projects = append(projects, project)
+	}
+	//if err != nil {
+	//	http.Error(w, err.Error(), 400)
+	//	return
+	//}
+	output, err := json.Marshal(projects)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return

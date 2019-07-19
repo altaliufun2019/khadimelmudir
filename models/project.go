@@ -5,5 +5,5 @@ type Project struct {
 	CreatedDate   string `json:"created_date"`
 	Description   string `json:"description"`
 	Collaborators string `json:"collaborators"`
-	Tasks         []Task `json:"tasks"`
+	//Tasks         []Task `json:"tasks"`
 }

@@ -10,4 +10,5 @@ type Task struct {
 	IsDone           bool   `json:"is_done"`
 	Owner            string `json:"owner"`
 	Config           string `json:"config"`
+	Project          string `json:"project"`
 }

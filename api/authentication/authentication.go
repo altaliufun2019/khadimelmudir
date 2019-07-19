@@ -89,7 +89,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 				Username: credits.Username,
 				Name:     credits.Name,
 				Password: credits.Password,
-				Projects: []models.Project{},
+				//Projects: []models.Project{},
 			})
 	if err != nil {
 		Logger.ErrorLogger.Println("Error in inserting file:", err)
