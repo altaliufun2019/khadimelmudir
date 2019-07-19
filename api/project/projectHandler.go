@@ -66,14 +66,8 @@ func Add(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 400)
 		return
 	}
-
-	_, err = database.DB.Collection("project").InsertOne(context.TODO(), models.Project{
-		Name:          project.Name,
-		CreatedDate:   project.CreatedDate,
-		Description:   project.Description,
-		Collaborators: project.Collaborators,
-		Tasks:         []models.Task{},
-	})
+	project.Tasks = []models.Task{}
+	_, err = database.DB.Collection("project").InsertOne(context.TODO(), project)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
