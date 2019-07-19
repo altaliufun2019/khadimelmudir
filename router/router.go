@@ -31,4 +31,5 @@ func ApiMapper() {
 	projectHandler.Handle("/add_collaborator", jwtMiddleWare.Handler(http.HandlerFunc(project.AddCollaborator))).Methods("POST")
 
 	taskHandler.Handle("/add", jwtMiddleWare.Handler(http.HandlerFunc(task.Add))).Methods("POST")
+	taskHandler.Handle("/update", jwtMiddleWare.Handler(http.HandlerFunc(task.Update))).Methods("POST")
 }

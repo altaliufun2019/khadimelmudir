@@ -9,6 +9,5 @@ type Task struct {
 	IsOver           bool   `json:"is_over"`
 	IsDone           bool   `json:"is_done"`
 	Owner            string `json:"owner"`
-	Project          string `json:"project"`
 	Config           string `json:"config"`
 }
