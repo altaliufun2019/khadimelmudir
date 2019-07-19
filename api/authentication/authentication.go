@@ -19,12 +19,13 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 		return
 	}
-	err = checkUserInDB(w, r, credits)
+	name, err := checkUserInDB(w, r, credits)
 	if err != nil {
 		return
 	}
 
 	response.Msg = "login successful"
+	response.Name = name
 	response.Token, err = jwtEncoder(credits.Username)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
@@ -43,7 +44,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(200)
 }
 
-func checkUserInDB(w http.ResponseWriter, r *http.Request, credits loginCredentials) error {
+func checkUserInDB(w http.ResponseWriter, r *http.Request, credits loginCredentials) (string, error) {
 	var user models.User
 	err := database.
 		DB.
@@ -52,13 +53,13 @@ func checkUserInDB(w http.ResponseWriter, r *http.Request, credits loginCredenti
 		Decode(&user)
 	if err != nil {
 		http.Error(w, err.Error(), 401)
-		return err
+		return "", err
 	}
 	if user.Password != credits.Password {
 		http.Error(w, "wrong password", 400)
-		return errors.New("wrong password")
+		return "", errors.New("wrong password")
 	}
-	return nil
+	return user.Name, nil
 }
 
 func SignUp(w http.ResponseWriter, r *http.Request) {

@@ -8,6 +8,7 @@ type loginCredentials struct {
 type loginResponse struct {
 	Token string `json:"token"`
 	Msg   string `json:"msg"`
+	Name  string `json:"name"`
 }
 
 type signUpCredits struct {

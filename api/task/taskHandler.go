@@ -32,7 +32,17 @@ func Add(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	update := bson.M{"$push": bson.M{"tasks": task}}
+	update := bson.M{"$push": bson.M{"tasks": models.Task{
+		Name:             task.Name,
+		Comment:          task.Comment,
+		CreatedDate:      task.CreatedDate,
+		DueDate:          task.DueDate,
+		NotificationDate: task.NotificationDate,
+		IsOver:           task.IsOver,
+		IsDone:           task.IsDone,
+		Owner:            task.Owner,
+		Config:           task.Config,
+	}}}
 	_, err = database.DB.
 		Collection("project").
 		UpdateOne(context.TODO(), bson.D{{"Name", task.Project}}, update)
