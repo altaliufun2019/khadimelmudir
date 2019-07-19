@@ -20,6 +20,10 @@ import (
 //	Config           string `json:"config"`
 //}
 
+type projectOwner struct {
+	Project string `json:"project"`
+}
+
 func taskDecoder(r *http.Request) (models.Task, error) {
 	var task models.Task
 	body, err := ioutil.ReadAll(r.Body)
@@ -32,4 +36,18 @@ func taskDecoder(r *http.Request) (models.Task, error) {
 		return task, err
 	}
 	return task, nil
+}
+
+func decodeProjectOwner(r *http.Request) (projectOwner, error) {
+	var me projectOwner
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return me, err
+	}
+
+	err = json.Unmarshal(body, &me)
+	if err != nil {
+		return me, err
+	}
+	return me, nil
 }

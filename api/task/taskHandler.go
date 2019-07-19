@@ -2,6 +2,7 @@ package task
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"mudiralmaham/models"
@@ -71,5 +72,39 @@ func Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	_, _ = fmt.Fprint(w, "task updated successfully")
+	w.WriteHeader(200)
+}
+
+func Get(w http.ResponseWriter, r *http.Request) {
+	me, err := decodeProjectOwner(r)
+	if err != nil {
+		http.Error(w, err.Error(), 400)
+		return
+	}
+
+	var tasks []models.Task
+	cursor, err := database.
+		DB.
+		Collection("task").
+		Find(context.TODO(), bson.M{"project": me.Project})
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	for cursor.Next(context.TODO()) {
+		var task models.Task
+		cursor.Decode(&task)
+		tasks = append(tasks, task)
+	}
+	output, err := json.Marshal(tasks)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	_, err = w.Write(output)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
 	w.WriteHeader(200)
 }
