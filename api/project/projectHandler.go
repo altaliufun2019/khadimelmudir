@@ -59,6 +59,7 @@ func AddCollaborator(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 		return
 	}
+	w.WriteHeader(200)
 }
 
 func Add(w http.ResponseWriter, r *http.Request) {
