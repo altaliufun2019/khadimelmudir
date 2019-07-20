@@ -46,7 +46,7 @@ func SendNotification(newTask chan models.Task) {
 				if idx >= len(tasks) {
 					break
 				}
-				if tasks[idx].Owner != "ALL" && due.After(now) && !tasks[idx].IsOver {
+				if tasks[idx].Owner != "ALL" && due.Before(now) && !tasks[idx].IsOver {
 					tasks[idx].IsOver = true
 
 					m := gomail.NewMessage()
