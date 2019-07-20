@@ -40,13 +40,11 @@ func SendNotification(newTask chan models.Task) {
 						continue
 					}
 				}
-				if tasks[idx].IsOver {
-					tasks = append(tasks[:idx], tasks[idx+1:]...)
-				}
 				if idx >= len(tasks) {
 					break
 				}
-				if tasks[idx].Owner != "ALL" && due.Before(now) && !tasks[idx].IsOver {
+				if isAfter(now, due) && !tasks[idx].IsOver {
+
 					tasks[idx].IsOver = true
 
 					m := gomail.NewMessage()
@@ -57,17 +55,44 @@ func SendNotification(newTask chan models.Task) {
 						"<body>Hi there "+tasks[idx].Owner+"!<br><p> your task "+tasks[idx].Name+" has reached its due time, be sure to have completed it! <br>Good Day :)</p></body>")
 					d := gomail.NewDialer("smtp.gmail.com", 587, "magaroojoo@gmail.com", "majid77??")
 					if err := d.DialAndSend(m); err != nil {
-						print(err.Error())
+						println(err.Error())
 						return
 					}
 					_, err = database.DB.Collection("task").UpdateOne(context.TODO(), bson.M{"name": tasks[idx].Name}, bson.M{"$set": bson.M{"isover": true}})
-					tasks = append(tasks[:idx], tasks[idx+1:]...)
-					idx--
 					if err != nil {
-						print(err.Error())
+						println(err.Error())
 					}
 				}
 			}
 		}
 	}
+}
+
+func isAfter(first time.Time, second time.Time) bool {
+	if first.Year() > second.Year() {
+		return true
+	} else if first.Year() < second.Year() {
+		return false
+	}
+	if first.Month() > second.Month() {
+		return true
+	} else if first.Month() < second.Month() {
+		return false
+	}
+	if first.Day() > second.Day() {
+		return true
+	} else if first.Day() < second.Day() {
+		return false
+	}
+	if first.Hour() > second.Hour() {
+		return true
+	} else if first.Hour() < second.Hour() {
+		return false
+	}
+	if first.Minute() > second.Minute() {
+		return true
+	} else if first.Minute() < second.Minute() {
+		return false
+	}
+	return true
 }
