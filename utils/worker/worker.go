@@ -34,7 +34,11 @@ func SendNotification(newTask chan models.Task) {
 				due, err := time.Parse("Jan 2, 2006 15:04:05", tasks[idx].DueDate)
 				now := time.Now()
 				if err != nil {
-					println(err.Error())
+					due, err = time.Parse("Jan 2, 2006 3:04:05 PM", tasks[idx].DueDate)
+					if err != nil {
+						println(err.Error())
+						continue
+					}
 				}
 				if tasks[idx].IsOver {
 					tasks = append(tasks[:idx], tasks[idx+1:]...)
