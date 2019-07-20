@@ -59,6 +59,7 @@ func AddCollaborator(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 		return
 	}
+	_, _ = fmt.Fprint(w, "{}")
 	w.WriteHeader(200)
 }
 
