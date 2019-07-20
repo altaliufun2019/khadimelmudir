@@ -31,7 +31,7 @@ func SendNotification(newTask chan models.Task) {
 			tasks = append(tasks, task)
 		default:
 			for idx := 0; idx < len(tasks); idx++ {
-				due, err := time.Parse("Jan 2, 2006 3:04:05 PM", tasks[idx].DueDate)
+				due, err := time.Parse("Jan 2, 2006 15:04:05", tasks[idx].DueDate)
 				now := time.Now()
 				if err != nil {
 					println(err.Error())
@@ -48,7 +48,7 @@ func SendNotification(newTask chan models.Task) {
 					m := gomail.NewMessage()
 					m.SetHeader("From", "magaroojoo@gmail.com")
 					m.SetHeader("To", tasks[idx].Owner)
-					m.SetHeader("Subject", "collaboration request")
+					m.SetHeader("Subject", "task due time")
 					m.SetBody("text/html",
 						"<body>Hi there "+tasks[idx].Owner+"!<br><p> your task "+tasks[idx].Name+" has reached its due time, be sure to have completed it! <br>Good Day :)</p></body>")
 					d := gomail.NewDialer("smtp.gmail.com", 587, "magaroojoo@gmail.com", "majid77??")
