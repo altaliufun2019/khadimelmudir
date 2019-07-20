@@ -56,7 +56,7 @@ func SendNotification(newTask chan models.Task) {
 					d := gomail.NewDialer("smtp.gmail.com", 587, "magaroojoo@gmail.com", "majid77??")
 					if err := d.DialAndSend(m); err != nil {
 						println(err.Error())
-						return
+						continue
 					}
 					_, err = database.DB.Collection("task").UpdateOne(context.TODO(), bson.M{"name": tasks[idx].Name}, bson.M{"$set": bson.M{"isover": true}})
 					if err != nil {
