@@ -36,8 +36,15 @@ func SendNotification(newTask chan models.Task) {
 				if err != nil {
 					println(err.Error())
 				}
+				if tasks[idx].IsOver {
+					tasks = append(tasks[:idx], tasks[idx+1:]...)
+				}
+				if idx >= len(tasks) {
+					break
+				}
 				if due.After(now) && !tasks[idx].IsOver {
 					tasks[idx].IsOver = true
+
 					m := gomail.NewMessage()
 					m.SetHeader("From", "magaroojoo@gmail.com")
 					m.SetHeader("To", tasks[idx].Owner)
@@ -50,6 +57,8 @@ func SendNotification(newTask chan models.Task) {
 						return
 					}
 					_, err = database.DB.Collection("task").UpdateOne(context.TODO(), bson.M{"name": tasks[idx].Name}, bson.M{"$set": bson.M{"isover": true}})
+					tasks = append(tasks[:idx], tasks[idx+1:]...)
+					idx--
 					if err != nil {
 						print(err.Error())
 					}

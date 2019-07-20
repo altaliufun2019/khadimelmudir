@@ -31,7 +31,6 @@ func Add(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 400)
 		return
 	}
-	authentication.NewTask <- task
 	//
 	//update := bson.M{"$push": bson.M{"tasks": models.Task{
 	//	Name:             task.Name,
@@ -54,6 +53,9 @@ func Add(w http.ResponseWriter, r *http.Request) {
 	//_, _ = fmt.Fprint(w, "task added successfully")
 	_, _ = fmt.Fprint(w, "{}")
 	w.WriteHeader(200)
+	go func() {
+		authentication.NewTask <- task
+	}()
 }
 
 func Update(w http.ResponseWriter, r *http.Request) {
