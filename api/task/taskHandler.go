@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"mudiralmaham/models"
+	"mudiralmaham/utils/authentication"
 	"mudiralmaham/utils/database"
 	"net/http"
 )
@@ -30,6 +31,7 @@ func Add(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 400)
 		return
 	}
+	authentication.NewTask <- task
 	//
 	//update := bson.M{"$push": bson.M{"tasks": models.Task{
 	//	Name:             task.Name,

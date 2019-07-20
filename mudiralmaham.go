@@ -4,9 +4,12 @@ import (
 	"fmt"
 	"github.com/gorilla/handlers"
 	"log"
+	"mudiralmaham/models"
 	"mudiralmaham/router"
 	logger "mudiralmaham/utils/Logger"
+	"mudiralmaham/utils/authentication"
 	"mudiralmaham/utils/database"
+	"mudiralmaham/utils/worker"
 	"net/http"
 	"os"
 	"time"
@@ -22,7 +25,8 @@ func main() {
 		log.Printf("Defaulting to port %s", port)
 		logger.GeneralLogger.Printf("Defaulting to port %s\n", port)
 	}
-
+	authentication.NewTask = make(chan models.Task)
+	go worker.SendNotification(authentication.NewTask)
 	srv := &http.Server{
 		//Handler: handlers.LoggingHandler(logger.GeneralLogger.Writer(), router.Router),
 		Handler:      handlers.LoggingHandler(os.Stdout, router.Router),
@@ -31,6 +35,7 @@ func main() {
 		ReadTimeout:  15 * time.Second,
 	}
 	startUpLog(false, srv, port)
+
 }
 
 func startUpLog(inFile bool, srv *http.Server, port string) {
