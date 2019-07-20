@@ -56,7 +56,8 @@ func AddCollaborator(w http.ResponseWriter, r *http.Request) {
 			"<button type=\"button\" style=\"color: red\" onClick=\"send()\"> reject </body> </html>")
 	d := gomail.NewDialer("smtp.gmail.com", 587, "magaroojoo@gmail.com", "majid77??")
 	if err := d.DialAndSend(m); err != nil {
-		panic(err)
+		http.Error(w, err.Error(), 500)
+		return
 	}
 }
 
